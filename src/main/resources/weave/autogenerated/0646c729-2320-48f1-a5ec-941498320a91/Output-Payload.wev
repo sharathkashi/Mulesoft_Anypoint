@@ -1,0 +1,20 @@
+%dw 2.0
+
+type auto_0646c729_2320_48f1_a5ec_941498320a91_Output_Payload = {
+  name: String, 
+  contact_information: {
+    address: {
+      country: String, 
+      city: String, 
+      street: String, 
+      state: String, 
+      _?: Any
+    }, 
+    phno: String, 
+    email: String, 
+    _?: Any
+  }, 
+  ID?: Number, 
+  _?: Any
+}
+

@@ -1,0 +1,14 @@
+{
+  "id": 1,
+  "name": "Max",
+  "contact-information": {
+    "address": {
+      "street":"Market Street",
+      "city":"San Francisco",
+      "state":"California",
+      "country":"United States"
+      },
+    "email":"max@mail.com",
+    "phno": "+91 (123) 456-7890"
+    }
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "Max",
+    "contact-information": {
+      "address": {
+        "street":"Market Street",
+        "city":"San Francisco",
+        "state":"California",
+        "country":"United States"
+        },
+      "email":"max@mail.com",
+      "phno": "+91 (123) 456-7890"
+      }
+  },
+   {
+     "id": 2,
+     "name": "Max mule",
+    "contact-information": {
+      "address": {
+        "street":"Market-Street",
+        "city":"San Francisco",
+        "state":"California",
+        "country":"UnitedStates"
+        },
+      "email":"maxmule@mail.com",
+      "phno": "+91 (456) 456-7890"
+      }
+    }
+]

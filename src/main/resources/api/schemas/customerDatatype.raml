@@ -1,0 +1,51 @@
+#%RAML 1.0 DataType
+
+type: object
+properties: 
+  ID?: integer
+  name: string
+  contact_information:
+    type: object
+    properties:
+      address:
+        type: object
+        properties:
+          street: string
+          city: string
+          state: string
+          country: string
+      email: string
+      phno: string
+
+# Contact:
+#    properties:
+#      address:
+#        type: Address
+#      email:
+#        type: Email
+#        phno:
+#          type: PhoneNumber
+
+# Address:
+#     properties:
+#       street:
+#         type: string
+#       city:
+#         type: string
+#       state:
+#         type: string
+#       country:
+#         type: string
+
+# Email: 
+#   pattern: ^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$
+
+# PhoneNumber:
+#   pattern: ^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$
+
+# Customer:
+#   properties:
+#     name:
+#       type: string
+#     contact:
+#       type: Contact

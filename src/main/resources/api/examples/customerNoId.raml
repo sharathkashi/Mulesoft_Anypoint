@@ -1,0 +1,48 @@
+#%RAML 1.0 NamedExample
+
+
+"name": "shara"
+"contact_information":
+  "address": 
+    "street": "Street"
+    "city": "Francisco"
+    "state": "California"
+    "country": "United States"
+  "email": "shar@mail.com"
+  "phno": "+91 (999) 456-7890"
+
+
+
+###################################################
+# customer:
+#   properties:
+#     name:
+#       type: string
+#     contact:
+#       type: Contact
+
+# Contact:
+#    properties:
+#      address:
+#        type: Address
+#      email:
+#        type: Email
+#        phno:
+#          type: PhoneNumber
+
+# Address:
+#     properties:
+#       street:
+#         type: string
+#       city:
+#         type: string
+#       state:
+#         type: string
+#       country:
+#         type: string
+
+# Email: 
+#   pattern: ^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$
+
+# PhoneNumber:
+#   pattern: ^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$

@@ -1,0 +1,64 @@
+#%RAML 1.0
+title: Customer API
+
+types:  
+  Customer: !include schemas/customerDatatype.raml
+
+/customers:
+  get:
+#    queryParameters:
+#      keyword:
+#        type: string
+#        required: true
+#        default: "all"
+#        minLength: 3
+#        maxLength: 3
+    responses:
+      200:
+        body:
+          application/json:
+            type: Customer[]
+            example:
+              !include examples/customers.raml
+
+  post:
+    body:
+      application/json:
+        type: Customer
+        examples:
+          input: !include examples/customerNoId.raml
+    responses:
+      201:
+        body:
+          application/json:
+            example: {"message": customer data added}
+            
+
+  /{customerId}:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: Customer
+              example: !include examples/customer.raml
+    
+    delete:
+      responses:
+        200:
+          body:
+            application/json:
+              type: Customer | object
+              example: {"message": "customer data deleted"}
+              # !include examples/customer.raml
+    put:
+      body:
+        application/json:
+          type: Customer
+          examples:
+            input: !include examples/customerNoId.raml
+      responses:
+        201:
+          body:
+            application/json:
+              example: {"message": customer data updated}          

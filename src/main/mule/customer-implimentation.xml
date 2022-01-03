@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="637a36a4-9084-45ef-a999-3a9934fce635" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="c876313b-9bce-467d-aa6f-7e312108e4f9" >
+		<db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.user}" password="${db.password}" database="${db.database}" />
+	</db:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="7493cd0d-a4e7-4468-85b7-f5add85715f0" file="mule_config.yaml" />
+	<flow name="GET_All_Customers" doc:id="8fd0a4c5-fc3e-40df-88fa-d789359e6f8b" >
+		<db:select doc:name="Select all customers" doc:id="6d8652d1-3c3c-444b-84f5-ee483bb7f1e8" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from customer]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="a504e330-3eaf-4e57-b27e-e9bc1270b7b2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	id: payload01.customer_id,
+	name: payload01.customer_name default "",
+	"contact-information": {
+		address: {
+			street: payload01.customer_street default "",
+			city: payload01.customer_city default "",
+			state: payload01.customer_state default "",
+			country: payload01.customer_country default ""
+		},
+		email: payload01.customer_email default "",
+		phno: payload01.customer_phno default ""
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="POST_a_customer" doc:id="7f7efc2f-ad56-41cd-a517-1f7a74e68cfb" >
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="399f03de-3c08-4cbc-a1e8-3edb5dade48b" />
+		<db:insert doc:name="Inserting data to customer table" doc:id="d1ba3c36-1d91-4c21-a1a3-8a6360a9c94c" config-ref="Database_Config">
+			<db:sql ><![CDATA[INSERT INTO customer(`customer_name`,`customer_email`,`customer_phno`,
+`customer_street`,`customer_city`,`customer_state`,`customer_country`)
+VALUES
+(:name,:email,:phno,:street,:city,:state,:country);]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{"name": payload.name,
+"email": payload.contact_information.email,
+"phno": payload.contact_information.phno,
+"street": payload.contact_information.address.street,
+"city": payload.contact_information.address.city,
+"state": payload.contact_information.address.state,
+"country": payload.contact_information.address.country
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="8b04d53c-2d91-40d8-ada4-e73479838e95" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"data added by affected Rows is": payload.affectedRows
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="GET_Customer_ByID" doc:id="0646c729-2320-48f1-a5ec-941498320a91" >
+		<db:select doc:name="Select" doc:id="5d641740-3a33-44a0-bb05-311507b01917" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from customer where customer_id= :id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{"id": attributes.uriParams.customerId}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="560d0bda-3ba0-478c-8bca-72a764607cd9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	id: payload01.customer_id,
+	name: payload01.customer_name default "",
+	"contact-information": {
+		address: {
+			street: payload01.customer_street default "",
+			city: payload01.customer_city default "",
+			state: payload01.customer_state default "",
+			country: payload01.customer_country default ""
+		},
+		email: payload01.customer_email default "",
+		phno: payload01.customer_phno default ""
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="DELETE_Customer_ByID" doc:id="8b7776a1-0ae3-451b-b920-a0a0d323e099" >
+		<db:delete doc:name="Delete a customer" doc:id="7a808f3c-9fdd-471c-80f1-2c603d645681" config-ref="Database_Config">
+			<db:sql ><![CDATA[delete from customer where customer_id = :id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{"id": attributes.uriParams.customerId}]]]></db:input-parameters>
+		</db:delete>
+		<ee:transform doc:name="Transform Message" doc:id="a2bacca1-2f3f-489e-9144-da2e1e95a928" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"customer deleted " ++ payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="PUT_Customer_ById" doc:id="ae826d1b-fe3f-4e01-9ebd-2c0b53589a8c" >
+		<db:update doc:name="Update" doc:id="5659a377-580d-4a6c-b9d5-db8c376fae92" config-ref="Database_Config">
+			<db:sql ><![CDATA[UPDATE `customer` SET `customer_name` = :name,`customer_email` = :email,`customer_phno` = :phno,
+`customer_street` = :street,`customer_city` = :city,`customer_state` = :state,`customer_country` = :country
+WHERE `customer_id` = :id;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{"id":attributes.uriParams.customerId,
+"name": payload.name,
+"email": payload.contact_information.email,
+"phno": payload.contact_information.phno,
+"street": payload.contact_information.address.street,
+"city": payload.contact_information.address.city,
+"state": payload.contact_information.address.state,
+"country": payload.contact_information.address.country
+}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="Transform Message" doc:id="9469fa4e-6cb4-4220-8a18-8baefe200a8d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{"customer data updated": payload }]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="customer-implimentationFlow" doc:id="14369122-5592-4db7-95a9-c0b97625a1d8" >
+	</flow>
+	<flow name="map_and_mapObject" doc:id="aa8dd2e9-cf6b-4217-8ef6-ae8e67dcef7f" >
+		<ee:transform doc:name="map when arrays of element exists" doc:id="bcd571ce-7a70-458a-9a58-d1455851d3ed" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var a =[{
+	name:"sharath",
+	id:1,
+	org:"cat"
+},
+{
+	name:"dev",
+	id:2,
+	org:"amz"
+},{
+	name:"kira",
+	id:2,
+	org:"infy"
+}
+]
+output application/json
+---
+/*
+ * 
+a map{
+* indexValue:$$,
+	candidateName:$.name,
+	id:$.id,
+	org:$.org,
+	uniqueid:$.name ++ $.id ++ $.org
+}
+* 
+*/
+a map ((item, index) ->{
+	indexValue:index,
+	candidateName:item.name,
+	id:item.id,
+	org:item.org,
+	uniqueid:item.name ++ item.id ++ item.org
+}
+)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="mapObject when single object exist" doc:id="6d5539ec-0b2c-4610-84e8-7606028b7e41" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var a ={
+	name:"sharath",
+	id:1,
+	org:"cat"
+}
+output application/json
+---
+a mapObject ((value, key, index) -> 
+	{
+		indexValue:index
+	}
+	
+)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="json to xml" doc:id="9d0436b6-2c12-4f4c-a2c4-867114ce7969" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var a =[{
+	name:"sharath",
+	id:1,
+	org:"cat"
+},
+{
+	name:"dev",
+	id:2,
+	org:"amz"
+},{
+	name:"kira",
+	id:2,
+	org:"infy"
+}
+]
+output application/xml
+---
+employees:
+employee:a]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="json_to_java/object" doc:id="822185a7-ae69-47c5-b9a4-e3c09323a63d">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+var a =[{
+	name:"sharath",
+	id:1,
+	org:"cat"
+},
+{
+	name:"dev",
+	id:2,
+	org:"amz"
+},{
+	name:"kira",
+	id:2,
+	org:"infy"
+}
+]
+output application/java
+---
+a]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="reduce() only on arrays" doc:id="b46ad602-74f2-4d78-a646-6d4c52b39120" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var a =[{
+	name:"sharath",
+	id:1,
+	org:"cat"
+},
+{
+	name:"dev",
+	id:2,
+	org:"amz"
+},{
+	name:"kira",
+	id:2,
+	org:"infy"
+}
+]
+output application/json
+---
+a reduce($++$$)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="pluck only on object" doc:id="abf9c02c-9c2f-4ab7-93d6-889cbe59ce26" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var a =
+{
+"a":{
+	name:"sharath",
+	id:1,
+	org:"cat"
+},
+"b":{
+	name:"dev",
+	id:2,
+	org:"amz"
+},
+"c":{
+	name:"kira",
+	id:2,
+	org:"infy"
+}
+}
+output application/json
+---
+a pluck ((value, key, index) -> 
+	{
+		indexValue:index,
+		keyValue:key,
+		valueIs:value
+		
+	}
+)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="flattern" doc:id="9e9af47f-2cd4-4c20-ad90-be7e82fc0db3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var a =[{
+	name:"sharath",
+	id:1,
+	org:"cat"
+},
+{
+	name:"dev",
+	id:2,
+	org:"amz"
+},{
+	name:"kira",
+	id:3,
+	org:"infy"
+}
+]
+var b =[{
+	name:"sharath",
+	id:11,
+	org:"cat"
+},
+{
+	name:"dev",
+	id:22,
+	org:"amz"
+},{
+	name:"kira",
+	id:33,
+	org:"infy"
+}
+]
+output application/json
+---
+(flatten(a+b)).id]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="filter" doc:id="5dd65a02-94de-4140-abda-81424ac6443c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var a =[{
+	name:"sharath",
+	id:1,
+	org:"cat"
+},
+{
+	name:"dev",
+	id:2,
+	org:"amz"
+},{
+	name:"kira",
+	id:3,
+	org:"infy"
+}
+]
+output application/json
+---
+(a map({
+	name:$.name,
+	id:$.id,
+	org:$.org
+}))filter $.id >2]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

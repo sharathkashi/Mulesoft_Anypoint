@@ -1,0 +1,102 @@
+      
+[
+  {
+    "id": 1,
+    "name": "Max",
+    "contact-information": {
+      "address": {
+        "street": "Market Street",
+        "city": "San Francisco",
+        "state": "California",
+        "country": "United States"
+      },
+      "email": "max@mail.com",
+      "phno": "+91 (123) 456-7890"
+    }
+  },
+  {
+    "id": 2,
+    "name": "Maxmule",
+    "contact-information": {
+      "address": {
+        "street": "MarketStreet",
+        "city": "San Francisco",
+        "state": "California",
+        "country": "UnitedStates"
+      },
+      "email": "maxmule@gmail.com",
+      "phno": "+91 (456) 456-7890"
+    }
+  },
+  {
+    "id": 3,
+    "name": "dev",
+    "contact-information": {
+      "address": {
+        "street": "navanagar",
+        "city": "Davanagere",
+        "state": "Karnataka",
+        "country": "India"
+      },
+      "email": "devara@gmail.com",
+      "phno": "+91 (996) 424-5488"
+    }
+  },
+  {
+    "id": 4,
+    "name": "sagar",
+    "contact-information": {
+      "address": {
+        "street": "chennagiri",
+        "city": "Davanagere",
+        "state": "Karnataka",
+        "country": "India"
+      },
+      "email": "sag@gmail.com",
+      "phno": "+91 (944) 932-8317"
+    }
+  },
+  {
+    "id": 5,
+    "name": "lingaraj",
+    "contact-information": {
+      "address": {
+        "street": "malligere",
+        "city": "Davanagere",
+        "state": "Karnataka",
+        "country": "India"
+      },
+      "email": "lingaraj@gmail.com",
+      "phno": "+91 (944) 914-2183"
+    }
+  },
+  {
+    "id": 6,
+    "name": "kiran",
+    "contact-information": {
+      "address": {
+        "street": "malligere",
+        "city": "Davanagere",
+        "state": "Karnataka",
+        "country": "India"
+      },
+      "email": "kira@gmail.com",
+      "phno": "+91 (910) 566-0266"
+    }
+  },
+  {
+    "id": 7,
+    "name": "sharath kumar",
+    "contact-information": {
+      "address": {
+        "street": "kenchapura",
+        "city": "chitradurga",
+        "state": "Karnataka",
+        "country": "India"
+      },
+      "email": "sharu@gmail.com",
+      "phno": "+91 (959) 194-7437"
+    }
+  }
+]
+    

@@ -1,0 +1,127 @@
+#%RAML 1.0
+title: Customer API
+
+types:  
+  Customer: !include ../schemas/customerDatatype.raml
+
+  Customer2:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      contact_information:
+        type: Contact
+        
+  Contact:
+    properties:
+      address:
+        type: Address
+      email:
+        type: Email
+      phno:
+        type: PhoneNumber
+
+  Address:
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+
+  Email: 
+    pattern: ^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$
+
+  PhoneNumber:
+    pattern: ^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$
+
+
+
+/customers:
+  get:
+    queryParameters:
+      keyword:
+        type: string
+        required: true
+        default: "all"
+        minLength: 3
+        maxLength: 3
+    responses:
+      200:
+        body:
+          application/json:
+            type: Customer[]
+            example:
+              !include ../examples/customers.raml
+
+  post:
+    body:
+      application/json:
+        type: Customer
+        examples:
+          input: !include ../examples/customerNoId.raml
+    responses:
+      201:
+        body:
+          application/json:
+            example: {"message": customer data added}
+            
+
+  /{customerId}:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: Customer
+              example: !include ../examples/customer.raml
+    
+    delete:
+      responses:
+        200:
+          body:
+            application/json:
+              type: Customer | object
+              example: {"message": "customer data deleted"}
+              # !include examples/customer.raml
+    put:
+      body:
+        application/json:
+          type: Customer
+          examples:
+            input: !include ../examples/customerNoId.raml
+      responses:
+        201:
+          body:
+            application/json:
+              example: {"message": customer data updated}          
+
+
+
+# post:
+#     body:
+#       application/json:
+#         properties:
+#           customer_name:
+#             type: string
+#             required: true
+#           customer_phno:
+#             type: number
+#             minimum: 9
+#             maximum: 10
+#             required: true
+#           customer_address:
+#             type: string
+#             minLength: 4
+#             maxLength: 50
+#             required: true
+#     responses:
+#       201:
+#         body:
+#           application/json:
+#             example:
+#               {"message": "customer data added"}
